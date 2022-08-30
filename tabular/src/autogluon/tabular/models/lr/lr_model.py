@@ -228,6 +228,15 @@ class LinearModel(AbstractModel):
                 break
 
         self.model = model
+        logger.warning(f'[Debug] Trained model. self.model = {type(self.model)} --- {self.model}, params = {params}')
+        # logger.warning('Converting to onnx.')
+        # from skl2onnx import convert_sklearn
+        # from skl2onnx.common.data_types import FloatTensorType
+        # initial_type = [('float_input', FloatTensorType([None, 4]))]
+        # onx = convert_sklearn(self.model, initial_types=initial_type)
+        # with open(f"lr.onnx", "wb") as f:
+        #     f.write(onx.SerializeToString())
+        # logger.warning('Converting to onnx done.')
         self.params_trained['max_iter'] = total_iter
 
     def _select_features_handle_text_include(self, df, categorical_featnames, language_featnames, continuous_featnames, bool_featnames):

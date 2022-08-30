@@ -133,6 +133,13 @@ class XGBoostModel(AbstractModel):
             # avoid unnecessary warning from XGBoost v1.3.0
             params['eval_metric'] = 'logloss'
         self.model = model_type(**params)
+        logger.warning(f'[Debug] Trained model. self.model = {type(self.model)} --- {self.model}, params = {params}')
+        print("Saving X & y ...")
+        import pickle
+        with open("data/xgb_X.pkl", 'wb') as f:
+            pickle.dump(X, f)
+        with open("data/xgb_y.pkl", 'wb') as f:
+            pickle.dump(y, f)
         self.model.fit(
             X=X,
             y=y,

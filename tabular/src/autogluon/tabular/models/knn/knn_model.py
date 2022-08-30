@@ -96,11 +96,27 @@ class KNNModel(AbstractModel):
             logger.log(15, "sample_weight not yet supported for KNNModel, this model will ignore them in training.")
 
         num_rows_max = len(X)
+        print("Saving X & y ...")
+        import pickle
+        with open("data/knn_X.pkl", 'wb') as f:
+            pickle.dump(X, f)
+        with open("data/knn_y.pkl", 'wb') as f:
+            pickle.dump(y, f)
         # FIXME: v0.1 Must store final num rows for refit_full or else will use everything! Worst case refit_full could train far longer than the original model.
         if time_limit is None or num_rows_max <= 10000:
             self.model = self._get_model_type()(**params).fit(X, y)
         else:
             self.model = self._fit_with_samples(X=X, y=y, model_params=params, time_limit=time_limit - (time.time() - time_start))
+        logger.warning(f'[Debug] Trained KNN model. self.model = {type(self.model)} --- {self.model}, params = {params}')
+        # logger.warning(f'Converting to onnx.')  # X.shape = {X.shape}, X = {X}')
+        # from skl2onnx import convert_sklearn
+        # from skl2onnx.common.data_types import FloatTensorType
+        # #initial_type = [('float_input', FloatTensorType([None, 4]))]
+        # initial_type = [('float_input', FloatTensorType([9769, 6]))]
+        # onx = convert_sklearn(self.model, initial_types=initial_type)
+        # with open("knn.onnx", "wb") as f:
+        #     f.write(onx.SerializeToString())
+        # logger.warning('Converting to onnx done.')
 
     def _estimate_memory_usage(self, X, **kwargs):
         model_size_bytes = 4 * X.shape[0] * X.shape[1]  # Assuming float32 types

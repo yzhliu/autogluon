@@ -186,6 +186,12 @@ class RFModel(AbstractModel):
                 else:
                     params['n_estimators'] = n_estimators
                     model = model_cls(**params)
+            print("Saving X & y ...")
+            import pickle
+            with open("data/rf_X.pkl", 'wb') as f:
+                pickle.dump(X, f)
+            with open("data/rf_y.pkl", 'wb') as f:
+                pickle.dump(y, f)
             model = model.fit(X, y, sample_weight=sample_weight)
             if (i == 0) and (len(n_estimator_increments) > 1):
                 time_elapsed = time.time() - time_train_start
@@ -223,6 +229,15 @@ class RFModel(AbstractModel):
             # This reduces memory usage / disk usage.
             model.estimators_ = None
         self.model = model
+        logger.warning(f'[Debug] Trained model. self.model = {type(self.model)} --- {self.model}, params = {params}')
+        # logger.warning('Converting to onnx.')
+        # from skl2onnx import convert_sklearn
+        # from skl2onnx.common.data_types import FloatTensorType
+        # initial_type = [('float_input', FloatTensorType([None, 4]))]
+        # onx = convert_sklearn(self.model, initial_types=initial_type)
+        # with open(f"rf.onnx", "wb") as f:
+        #     f.write(onx.SerializeToString())
+        # logger.warning('Converting to onnx done.')
         self.params_trained['n_estimators'] = self.model.n_estimators
 
     # TODO: Remove this after simplifying _predict_proba to reduce code duplication. This is only present for SOFTCLASS support.

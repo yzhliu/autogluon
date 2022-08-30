@@ -702,6 +702,17 @@ class AbstractModel:
             y_pred = self.model.predict(X)
             return y_pred
 
+        # logger.warning(f"predict self.model = {self.model}, X.type = {type(X)}, X.shape = {X.shape}, X = {X}")
+        # import onnxruntime as rt
+        # import numpy
+        # logger.warning("starting to load knn.onnx.")
+        # sess = rt.InferenceSession("knn.onnx")
+        # logger.warning("knn.onnx loaded.")
+        # input_name = sess.get_inputs()[0].name
+        # label_name = sess.get_outputs()[0].name
+        # logger.warning(f"input_name = {input_name}, label_name = {label_name}")
+        # # pred_onx = sess.run([label_name], {input_name: X_test.astype(numpy.float32)})[0]
+
         y_pred_proba = self.model.predict_proba(X)
         return self._convert_proba_to_unified_form(y_pred_proba)
 
