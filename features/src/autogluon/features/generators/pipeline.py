@@ -1,7 +1,6 @@
 import copy
 import logging
 
-import psutil
 from pandas import DataFrame
 
 from autogluon.common.features.feature_metadata import FeatureMetadata
@@ -83,23 +82,29 @@ class PipelineFeatureGenerator(BulkFeatureGenerator):
         X_len = len(X)
         self.pre_memory_usage = get_approximate_df_mem_usage(X, sample_ratio=0.2).sum()
         self.pre_memory_usage_per_row = self.pre_memory_usage / X_len
+        """
+        import psutil
         available_mem = psutil.virtual_memory().available
         pre_memory_usage_percent = self.pre_memory_usage / (available_mem + self.pre_memory_usage)
         self._log(20, f'\tAvailable Memory:                    {(round((self.pre_memory_usage + available_mem) / 1e6, 2))} MB')
         self._log(20, f'\tTrain Data (Original)  Memory Usage: {round(self.pre_memory_usage / 1e6, 2)} MB ({round(pre_memory_usage_percent * 100, 1)}% of available memory)')
         if pre_memory_usage_percent > 0.05:
             self._log(30, f'\tWarning: Data size prior to feature transformation consumes {round(pre_memory_usage_percent * 100, 1)}% of available memory. Consider increasing memory or subsampling the data to avoid instability.')
+        """
 
     def _compute_post_memory_usage(self, X: DataFrame):
         X_len = len(X)
         self.post_memory_usage = get_approximate_df_mem_usage(X, sample_ratio=0.2).sum()
         self.post_memory_usage_per_row = self.post_memory_usage / X_len
 
+        """
+        import psutil
         available_mem = psutil.virtual_memory().available
         post_memory_usage_percent = self.post_memory_usage / (available_mem + self.post_memory_usage + self.pre_memory_usage)
         self._log(20, f'\tTrain Data (Processed) Memory Usage: {round(self.post_memory_usage / 1e6, 2)} MB ({round(post_memory_usage_percent * 100, 1)}% of available memory)')
         if post_memory_usage_percent > 0.15:
             self._log(30, f'\tWarning: Data size post feature transformation consumes {round(post_memory_usage_percent * 100, 1)}% of available memory. Consider increasing memory or subsampling the data to avoid instability.')
+        """
 
     def print_feature_metadata_info(self, log_level=20):
         if self._useless_features_in:

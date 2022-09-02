@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import psutil
 import random
 import time
 import warnings
@@ -560,6 +559,7 @@ class TabularNeuralNetTorchModel(AbstractNeuralNetworkModel):
         return self.eval_metric
 
     def _get_default_resources(self):
+        import psutil
         # psutil.cpu_count(logical=False) is faster in training than psutil.cpu_count()
         num_cpus = psutil.cpu_count(logical=False)
         num_gpus = 0

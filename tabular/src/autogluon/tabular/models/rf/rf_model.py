@@ -5,7 +5,6 @@ import sys
 import time
 
 import numpy as np
-import psutil
 
 from autogluon.common.features.types import R_BOOL, R_INT, R_FLOAT, R_CATEGORY
 from autogluon.core.constants import MULTICLASS, REGRESSION, SOFTCLASS, QUANTILE
@@ -125,6 +124,7 @@ class RFModel(AbstractModel):
 
     def _validate_fit_memory_usage(self, **kwargs):
         max_memory_usage_ratio = self.params_aux['max_memory_usage_ratio']
+        import psutil
         available_mem = psutil.virtual_memory().available
         expected_min_memory_usage = self.estimate_memory_usage(**kwargs) / available_mem
         if expected_min_memory_usage > (0.5 * max_memory_usage_ratio):  # if minimum estimated size is greater than 50% memory
@@ -138,6 +138,7 @@ class RFModel(AbstractModel):
              time_limit=None,
              sample_weight=None,
              **kwargs):
+        import psutil
         time_start = time.time()
 
         model_cls = self._get_model_type()

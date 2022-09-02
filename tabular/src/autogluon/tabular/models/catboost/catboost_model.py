@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-import psutil
 import numpy as np
 
 from autogluon.common.features.types import R_BOOL, R_INT, R_FLOAT, R_CATEGORY
@@ -219,6 +218,7 @@ class CatBoostModel(AbstractModel):
     #  It will return an updated iterations to train on that will avoid running OOM and running over time limit.
     #  Remove this logic once CatBoost fixes GPU support for callbacks and custom metrics.
     def _estimate_iter_in_time_gpu(self, *, X, eval_set, time_limit, verbose, params, num_rows_train, time_start, model_type):
+        import psutil
         import math
         import pickle
         import sys
@@ -289,6 +289,7 @@ class CatBoostModel(AbstractModel):
         max_memory_usage_ratio = self.params_aux['max_memory_usage_ratio']
         approx_mem_size_req = self.estimate_memory_usage(**kwargs)
         if approx_mem_size_req > 1e9:  # > 1 GB
+            import psutil
             available_mem = psutil.virtual_memory().available
             ratio = approx_mem_size_req / available_mem
             if ratio > (1 * max_memory_usage_ratio):
@@ -298,6 +299,7 @@ class CatBoostModel(AbstractModel):
                 logger.warning('\tWarning: Potentially not enough memory to safely train CatBoost model, roughly requires: %s GB, but only %s GB is available...' % (round(approx_mem_size_req / 1e9, 3), round(available_mem / 1e9, 3)))
 
     def _get_default_resources(self):
+        import psutil
         # psutil.cpu_count(logical=False) is faster in training than psutil.cpu_count()
         num_cpus = psutil.cpu_count(logical=False)
         num_gpus = 0

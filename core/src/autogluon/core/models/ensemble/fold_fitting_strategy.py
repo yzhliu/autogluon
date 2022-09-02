@@ -4,7 +4,6 @@ import os
 import time
 import pandas as pd
 import pickle
-import psutil
 from abc import abstractmethod
 
 from numpy import ndarray
@@ -363,6 +362,7 @@ class ParallelLocalFoldFittingStrategy(LocalFoldFittingStrategy):
 
     def is_mem_sufficient(self):
         '''Check if the memory is sufficient to do parallel training'''
+        import psutil
         model_mem_est = self._initialized_model_base.estimate_memory_usage(X=self.X)
         total_model_mem_est = self.num_parallel_jobs * model_mem_est
         data_mem_est = self._estimate_data_memory_usage()

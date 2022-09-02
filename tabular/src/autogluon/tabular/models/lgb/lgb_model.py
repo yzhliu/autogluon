@@ -5,7 +5,6 @@ import random
 import re
 import time
 import warnings
-import psutil
 
 import numpy as np
 from pandas import DataFrame, Series
@@ -222,6 +221,7 @@ class LGBModel(AbstractModel):
         if num_cpus == 0:
             # TODO Avoid using psutil when lgb fixed the mem leak.
             # psutil.cpu_count() is faster in inference than psutil.cpu_count(logical=False)
+            import psutil
             num_cpus = psutil.cpu_count()
         if self.problem_type == REGRESSION:
             return self.model.predict(X, num_threads=num_cpus)
@@ -330,6 +330,7 @@ class LGBModel(AbstractModel):
 
     def _get_default_resources(self):
         # psutil.cpu_count(logical=False) is faster in training than psutil.cpu_count()
+        import psutil
         num_cpus = psutil.cpu_count(logical=False)
         num_gpus = 0
         return num_cpus, num_gpus

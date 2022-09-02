@@ -1,6 +1,5 @@
 import logging
 import math
-import psutil
 
 from abc import ABC, abstractmethod
 
@@ -61,6 +60,7 @@ class CpuResourceCalculator(ResourceCalculator):
         max_jobs_in_parallel_memory = num_jobs
 
         if model_estimate_memory_usage is not None:
+            import psutil
             mem_available = psutil.virtual_memory().available
             # calculate how many jobs can run in parallel given memory available
             max_jobs_in_parallel_memory = max(1, int(mem_available // model_estimate_memory_usage))
@@ -202,6 +202,7 @@ class RayLightningCpuResourceCalculator(ResourceCalculator):
         cpu_per_job = max(minimum_cpu_per_job, total_num_cpus // num_jobs)
         max_jobs_in_parallel_memory = num_jobs
         if model_estimate_memory_usage is not None:
+            import psutil
             mem_available = psutil.virtual_memory().available
             # calculate how many jobs can run in parallel given memory available
             max_jobs_in_parallel_memory = max(1, int(mem_available // model_estimate_memory_usage))

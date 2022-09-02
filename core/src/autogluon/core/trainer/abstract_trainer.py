@@ -8,7 +8,6 @@ from typing import Dict, List, Union, Tuple
 import networkx as nx
 import numpy as np
 import pandas as pd
-import psutil
 import shutil
 from pathlib import Path
 
@@ -944,6 +943,7 @@ class AbstractTrainer:
             logger.log(30, f'No valid unpersisted models were specified to be persisted, so no change in model persistence was performed.')
             return []
         if max_memory is not None:
+            import psutil
             info = self.get_models_info(model_names)
             model_mem_size_map = {model: info[model]['memory_size'] for model in model_names}
             for model in model_mem_size_map:

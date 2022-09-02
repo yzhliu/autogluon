@@ -4,7 +4,6 @@ import contextlib
 import gc
 import logging
 import os
-import psutil
 import tempfile
 
 import numpy as np
@@ -63,6 +62,7 @@ class FastTextModel(AbstractModel):
              y,
              sample_weight=None,
              **kwargs):
+        import psutil
         if self.problem_type not in (BINARY, MULTICLASS):
             raise ValueError(
                 "FastText model only supports binary or multiclass classification"

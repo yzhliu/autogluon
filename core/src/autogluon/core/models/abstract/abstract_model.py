@@ -5,7 +5,6 @@ import logging
 import os
 import pickle
 from autogluon.core.utils import try_import
-import psutil
 import sys
 import time
 from typing import Dict, Union
@@ -583,7 +582,7 @@ class AbstractModel:
 
         self._register_fit_metadata(**kwargs)
         self.validate_fit_resources(**kwargs)
-        self._validate_fit_memory_usage(**kwargs)
+        # self._validate_fit_memory_usage(**kwargs)
         out = self._fit(**kwargs)
         if out is None:
             out = self
@@ -1167,6 +1166,7 @@ class AbstractModel:
         return 4 * get_approximate_df_mem_usage(X).sum()
 
     def _validate_fit_memory_usage(self, **kwargs):
+        import psutil
         max_memory_usage_ratio = self.params_aux['max_memory_usage_ratio']
         approx_mem_size_req = self.estimate_memory_usage(**kwargs)
         available_mem = psutil.virtual_memory().available

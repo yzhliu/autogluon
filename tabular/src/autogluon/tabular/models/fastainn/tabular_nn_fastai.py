@@ -1,6 +1,5 @@
 import copy
 import logging
-import psutil
 import time
 from builtins import classmethod
 from pathlib import Path
@@ -468,6 +467,7 @@ class NNFastAiTabularModel(AbstractModel):
         return default_auxiliary_params
 
     def _get_default_resources(self):
+        import psutil
         # psutil.cpu_count(logical=False) is faster in training than psutil.cpu_count()
         num_cpus = psutil.cpu_count(logical=False)
         num_gpus = 0
