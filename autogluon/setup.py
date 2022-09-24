@@ -17,13 +17,13 @@ version = ag.update_version(version)
 
 submodule = None  # None since this module is special (it isn't a real submodule)
 install_requires = [
-    f'autogluon.core[all]=={version}',
-    f'autogluon.features=={version}',
-    f'autogluon.tabular[all]=={version}',
-    f'autogluon.multimodal=={version}',
-    f'autogluon.text=={version}',
-    f'autogluon.vision=={version}',
-    f'autogluon.timeseries[all]=={version}',
+    # f'autogluon.core[all]=={version}',
+    # f'autogluon.features=={version}',
+    # f'autogluon.tabular[all]=={version}',
+    # f'autogluon.multimodal=={version}',
+    # f'autogluon.text=={version}',
+    # f'autogluon.vision=={version}',
+    # f'autogluon.timeseries[all]=={version}',
 ]
 
 install_requires = ag.get_dependency_version_ranges(install_requires)

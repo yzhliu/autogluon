@@ -1,5 +1,4 @@
 import time
-import psutil
 import logging
 
 from xgboost.callback import EarlyStopping
@@ -38,8 +37,9 @@ class EarlyStoppingCustom(EarlyStopping):
         model = super().before_training(model=model)
         if self.start_time is None:
             self.start_time = time.time()
-        self._mem_status = psutil.Process()
-        self._mem_init_rss = self._mem_status.memory_info().rss
+        # import psutil
+        # self._mem_status = psutil.Process()
+        # self._mem_init_rss = self._mem_status.memory_info().rss
         return model
 
     def after_iteration(self, model, epoch, evals_log):
@@ -67,24 +67,25 @@ class EarlyStoppingCustom(EarlyStopping):
         return False
 
     def _memory_check(self, model):
-        available = psutil.virtual_memory().available
-        cur_rss = self._mem_status.memory_info().rss
-        if cur_rss < self._mem_init_rss:
-            self._mem_init_rss = cur_rss
-        estimated_model_size_mb = (cur_rss - self._mem_init_rss) >> 20
-        available_mb = available >> 20
-
-        model_size_memory_ratio = estimated_model_size_mb / available_mb
-
-        if (model_size_memory_ratio > 1.0) or (available_mb < 512):
-            logger.warning('Warning: Large XGB model size may cause OOM error if training continues')
-            logger.warning(f'Available Memory: {available_mb} MB')
-            logger.warning(f'Estimated XGB model size: {estimated_model_size_mb} MB')
-            if self.verbose:
-                logger.warning(f'Warning: Early stopped XGB model prior to optimal result to avoid OOM error. Please increase available memory to avoid subpar model quality.\n')
-                logger.warning(f"Early stopping. Best iteration is: \t[{model.attr('best_iteration')}]\t{model.attr('best_score')}")
-            return True
-        elif self.verbose and (model_size_memory_ratio > 0.25):
-            logger.log(15, f'Available Memory: {available_mb} MB')
-            logger.log(15, f'Estimated XGB model size: {estimated_model_size_mb} MB')
+        # import psutil
+        # available = psutil.virtual_memory().available
+        # cur_rss = self._mem_status.memory_info().rss
+        # if cur_rss < self._mem_init_rss:
+        #     self._mem_init_rss = cur_rss
+        # estimated_model_size_mb = (cur_rss - self._mem_init_rss) >> 20
+        # available_mb = available >> 20
+        #
+        # model_size_memory_ratio = estimated_model_size_mb / available_mb
+        #
+        # if (model_size_memory_ratio > 1.0) or (available_mb < 512):
+        #     logger.warning('Warning: Large XGB model size may cause OOM error if training continues')
+        #     logger.warning(f'Available Memory: {available_mb} MB')
+        #     logger.warning(f'Estimated XGB model size: {estimated_model_size_mb} MB')
+        #     if self.verbose:
+        #         logger.warning(f'Warning: Early stopped XGB model prior to optimal result to avoid OOM error. Please increase available memory to avoid subpar model quality.\n')
+        #         logger.warning(f"Early stopping. Best iteration is: \t[{model.attr('best_iteration')}]\t{model.attr('best_score')}")
+        #     return True
+        # elif self.verbose and (model_size_memory_ratio > 0.25):
+        #     logger.log(15, f'Available Memory: {available_mb} MB')
+        #     logger.log(15, f'Estimated XGB model size: {estimated_model_size_mb} MB')
         return False

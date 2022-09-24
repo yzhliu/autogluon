@@ -125,7 +125,6 @@ class LGBModel(AbstractModel):
         valid_names = []
         valid_sets = []
         if dataset_val is not None:
-            from .callbacks import early_stopping_custom
             # TODO: Better solution: Track trend to early stop when score is far worse than best score, or score is trending worse over time
             early_stopping_rounds = ag_params.get('ag.early_stop', 'adaptive')
             if isinstance(early_stopping_rounds, (str, tuple, list)):
@@ -139,24 +138,25 @@ class LGBModel(AbstractModel):
                     params['metric'] = train_loss_name
                 elif train_loss_name not in params['metric']:
                     params['metric'] = f'{params["metric"]},{train_loss_name}'
-            callbacks += [
-                # Note: Don't use self.params_aux['max_memory_usage_ratio'] here as LightGBM handles memory per iteration optimally.  # TODO: Consider using when ratio < 1.
-                early_stopping_custom(early_stopping_rounds, metrics_to_use=[('valid_set', stopping_metric_name)], max_diff=None, start_time=start_time, time_limit=time_limit,
-                                      ignore_dart_warning=True, verbose=False, manual_stop_file=False, reporter=reporter, train_loss_name=train_loss_name),
-            ]
+            # from .callbacks import early_stopping_custom
+            # callbacks += [
+            #     # Note: Don't use self.params_aux['max_memory_usage_ratio'] here as LightGBM handles memory per iteration optimally.  # TODO: Consider using when ratio < 1.
+            #     early_stopping_custom(early_stopping_rounds, metrics_to_use=[('valid_set', stopping_metric_name)], max_diff=None, start_time=start_time, time_limit=time_limit,
+            #                           ignore_dart_warning=True, verbose=False, manual_stop_file=False, reporter=reporter, train_loss_name=train_loss_name),
+            # ]
             valid_names = ['valid_set'] + valid_names
             valid_sets = [dataset_val] + valid_sets
-        from lightgbm.callback import log_evaluation
-        if log_period is not None:
-            callbacks.append(log_evaluation(period=log_period))
+        # from lightgbm.callback import log_evaluation
+        # if log_period is not None:
+        #     callbacks.append(log_evaluation(period=log_period))
 
         seed_val = params.pop('seed_value', 0)
         train_params = {
             'params': params,
             'train_set': dataset_train,
             'num_boost_round': num_boost_round,
-            'valid_sets': valid_sets,
-            'valid_names': valid_names,
+            # 'valid_sets': valid_sets,
+            # 'valid_names': valid_names,
             'callbacks': callbacks,
         }
         if not isinstance(stopping_metric, str):
@@ -221,8 +221,9 @@ class LGBModel(AbstractModel):
         if num_cpus == 0:
             # TODO Avoid using psutil when lgb fixed the mem leak.
             # psutil.cpu_count() is faster in inference than psutil.cpu_count(logical=False)
-            import psutil
-            num_cpus = psutil.cpu_count()
+            # import psutil
+            # num_cpus = psutil.cpu_count()
+            num_cpus = 1
         if self.problem_type == REGRESSION:
             return self.model.predict(X, num_threads=num_cpus)
 
@@ -330,8 +331,9 @@ class LGBModel(AbstractModel):
 
     def _get_default_resources(self):
         # psutil.cpu_count(logical=False) is faster in training than psutil.cpu_count()
-        import psutil
-        num_cpus = psutil.cpu_count(logical=False)
+        # import psutil
+        # num_cpus = psutil.cpu_count(logical=False)
+        num_cpus = 1
         num_gpus = 0
         return num_cpus, num_gpus
 

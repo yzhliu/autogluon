@@ -18,14 +18,14 @@ version = ag.update_version(version)
 submodule = 'tabular'
 install_requires = [
     # version ranges added in ag.get_dependency_version_ranges()
-    'numpy',
-    'scipy',
-    'pandas',
-    'scikit-learn',
-    'psutil',
-    'networkx>=2.3,<3.0',
-    f'autogluon.core=={version}',
-    f'autogluon.features=={version}',
+    # 'numpy',
+    # 'scipy',
+    # 'pandas',
+    # 'scikit-learn',
+    # 'psutil',
+    # 'networkx>=2.3,<3.0',
+    # f'autogluon.core=={version}',
+    # f'autogluon.features=={version}',
 ]
 
 extras_require = {

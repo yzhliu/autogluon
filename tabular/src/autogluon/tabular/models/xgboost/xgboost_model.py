@@ -105,7 +105,7 @@ class XGBoostModel(AbstractModel):
             eval_set = None
         else:
             X_val = self.preprocess(X_val, is_train=False)
-            eval_set.append((X_val, y_val))
+            eval_set.append((X_val.toarray(), y_val.to_numpy()))
             early_stopping_rounds = ag_params.get('ag.early_stop', 'adaptive')
             if isinstance(early_stopping_rounds, (str, tuple, list)):
                 early_stopping_rounds = self._get_early_stopping_rounds(num_rows_train=num_rows_train, strategy=early_stopping_rounds)
@@ -128,13 +128,16 @@ class XGBoostModel(AbstractModel):
 
         from xgboost import XGBClassifier, XGBRegressor
         model_type = XGBClassifier if self.problem_type in PROBLEM_TYPES_CLASSIFICATION else XGBRegressor
-        if 'eval_metric' not in params and params.get('objective') == 'binary:logistic':
-            # avoid unnecessary warning from XGBoost v1.3.0
-            params['eval_metric'] = 'logloss'
+        # if 'eval_metric' not in params and params.get('objective') == 'binary:logistic':
+        #     # avoid unnecessary warning from XGBoost v1.3.0
+        #     params['eval_metric'] = 'logloss'
         self.model = model_type(**params)
+        import scipy
+        X_dense = X.toarray()
+        y_dense = y.to_numpy()
         self.model.fit(
-            X=X,
-            y=y,
+            X=X_dense,
+            y=y_dense,
             eval_set=eval_set,
             eval_metric=eval_metric,
             verbose=False,
@@ -153,9 +156,9 @@ class XGBoostModel(AbstractModel):
         self.model.set_params(n_jobs=num_cpus)
 
         if self.problem_type == REGRESSION:
-            return self.model.predict(X)
+            return self.model.predict(X.toarray())
 
-        y_pred_proba = self.model.predict_proba(X)
+        y_pred_proba = self.model.predict_proba(X.toarray())
         return self._convert_proba_to_unified_form(y_pred_proba)
 
     def _get_early_stopping_rounds(self, num_rows_train, strategy='auto'):
@@ -185,20 +188,21 @@ class XGBoostModel(AbstractModel):
     def _validate_fit_memory_usage(self, **kwargs):
         max_memory_usage_ratio = self.params_aux['max_memory_usage_ratio']
         approx_mem_size_req = self.estimate_memory_usage(**kwargs)
-        if approx_mem_size_req > 1e9:  # > 1 GB
-            import psutil
-            available_mem = psutil.virtual_memory().available
-            ratio = approx_mem_size_req / available_mem
-            if ratio > (1 * max_memory_usage_ratio):
-                logger.warning('\tWarning: Not enough memory to safely train XGBoost model, roughly requires: %s GB, but only %s GB is available...' % (round(approx_mem_size_req / 1e9, 3), round(available_mem / 1e9, 3)))
-                raise NotEnoughMemoryError
-            elif ratio > (0.75 * max_memory_usage_ratio):
-                logger.warning('\tWarning: Potentially not enough memory to safely train XGBoost model, roughly requires: %s GB, but only %s GB is available...' % (round(approx_mem_size_req / 1e9, 3), round(available_mem / 1e9, 3)))
+        # if approx_mem_size_req > 1e9:  # > 1 GB
+        #     import psutil
+        #     available_mem = psutil.virtual_memory().available
+        #     ratio = approx_mem_size_req / available_mem
+        #     if ratio > (1 * max_memory_usage_ratio):
+        #         logger.warning('\tWarning: Not enough memory to safely train XGBoost model, roughly requires: %s GB, but only %s GB is available...' % (round(approx_mem_size_req / 1e9, 3), round(available_mem / 1e9, 3)))
+        #         raise NotEnoughMemoryError
+        #     elif ratio > (0.75 * max_memory_usage_ratio):
+        #         logger.warning('\tWarning: Potentially not enough memory to safely train XGBoost model, roughly requires: %s GB, but only %s GB is available...' % (round(approx_mem_size_req / 1e9, 3), round(available_mem / 1e9, 3)))
 
     def _get_default_resources(self):
-        import psutil
+        # import psutil
         # psutil.cpu_count(logical=False) is faster in training than psutil.cpu_count()
-        num_cpus = psutil.cpu_count(logical=False)
+        # num_cpus = psutil.cpu_count(logical=False)
+        num_cpus = 1
         num_gpus = 0
         return num_cpus, num_gpus
 

@@ -138,7 +138,7 @@ class RFModel(AbstractModel):
              time_limit=None,
              sample_weight=None,
              **kwargs):
-        import psutil
+        # import psutil
         time_start = time.time()
 
         model_cls = self._get_model_type()
@@ -157,8 +157,9 @@ class RFModel(AbstractModel):
 
         num_trees_per_estimator = self._get_num_trees_per_estimator()
         bytes_per_estimator = num_trees_per_estimator * len(X) / 60000 * 1e6  # Underestimates by 3x on ExtraTrees
-        available_mem = psutil.virtual_memory().available
-        expected_memory_usage = n_estimators_final * bytes_per_estimator / available_mem
+        # available_mem = psutil.virtual_memory().available
+        # expected_memory_usage = n_estimators_final * bytes_per_estimator / available_mem
+        expected_memory_usage = 0
         
         if n_estimators_final > n_estimators_test * 2:
             if self.problem_type == MULTICLASS:

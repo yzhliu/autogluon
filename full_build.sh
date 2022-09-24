@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd common && python3 setup.py bdist_wheel && cd ..
-cd core && python3 setup.py bdist_wheel && cd ..
-cd features && python3 setup.py bdist_wheel && cd ..
-cd tabular && python3 setup.py bdist_wheel && cd ..
-cd multimodal && python3 setup.py bdist_wheel && cd ..
-cd text && python3 setup.py bdist_wheel && cd ..
-cd vision && python3 setup.py bdist_wheel && cd ..
-cd timeseries && python3 setup.py bdist_wheel && cd ..
-cd autogluon && python3 setup.py bdist_wheel && cd ..
+cd common && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd core && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd features && python3 setup.py clean bdist_wheel && cd ..
+cd tabular && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd multimodal && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd text && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd vision && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd timeseries && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
+cd autogluon && rm -rf build/ && python3 setup.py clean bdist_wheel && cd ..
 
 DIST_DST=/Users/yizhiliu/Workspace/autogluon_top/packaging_tutorial/dist/autogluon
 cp -f autogluon/dist/*.whl $DIST_DST/autogluon/
