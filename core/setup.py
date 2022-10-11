@@ -33,7 +33,7 @@ install_requires = [
     # 'distributed>=2021.09.1, <=2021.11.2',
     # 'boto3',
 
-    # f'autogluon.common=={version}',
+    f'autogluon_web_test.common=={version}',
 ]
 
 extras_require = {

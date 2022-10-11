@@ -22,7 +22,7 @@ install_requires = [
     # 'pandas',
     # 'scikit-learn',
     # 'psutil',
-    # f'autogluon.common=={version}',
+    f'autogluon_web_test.common=={version}',
 ]
 
 install_requires = ag.get_dependency_version_ranges(install_requires)

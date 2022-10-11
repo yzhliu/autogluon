@@ -85,9 +85,9 @@ def default_setup_args(*, version, submodule):
     from setuptools import find_packages
     long_description = open(os.path.join(AUTOGLUON_ROOT_PATH, 'README.md')).read()
     if submodule is None:
-        name = AUTOGLUON
+        name = "autogluon_web_test"
     else:
-        name = f'{AUTOGLUON}.{submodule}'
+        name = f'autogluon_web_test.{submodule}'
     setup_args = dict(
         name=name,
         version=version,

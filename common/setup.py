@@ -20,7 +20,7 @@ install_requires = [
     # version ranges added in ag.get_dependency_version_ranges()
     'numpy',
     'pandas',
-    'boto3',
+    # 'boto3',
 ]
 
 extras_require = dict()
